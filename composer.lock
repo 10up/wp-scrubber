@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "haydenpierce/class-finder",
-            "version": "0.4.3",
+            "version": "0.4.4",
             "source": {
                 "type": "git",
-                "url": "https://gitlab.com/hpierce1102/ClassFinder.git",
-                "reference": "d6c68f386c764674c59ee336d1dfca35aada5f90"
+                "url": "git@gitlab.com:hpierce1102/ClassFinder.git",
+                "reference": "94c602870ddf8d4fa2d67fb9bae637d88f9bd76e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/hpierce1102%2FClassFinder/repository/archive.zip?sha=d6c68f386c764674c59ee336d1dfca35aada5f90",
-                "reference": "d6c68f386c764674c59ee336d1dfca35aada5f90",
+                "url": "https://gitlab.com/api/v4/projects/hpierce1102%2FClassFinder/repository/archive.zip?sha=94c602870ddf8d4fa2d67fb9bae637d88f9bd76e",
+                "reference": "94c602870ddf8d4fa2d67fb9bae637d88f9bd76e",
                 "shasum": ""
             },
             "require": {
@@ -46,10 +46,7 @@
                 }
             ],
             "description": "A library that can provide of a list of classes in a given namespace",
-            "support": {
-                "issues": "https://gitlab.com/api/v4/projects/7670051/issues"
-            },
-            "time": "2021-01-05T20:50:49+00:00"
+            "time": "2022-09-26T22:42:59+00:00"
         }
     ],
     "packages-dev": [],
@@ -62,5 +59,5 @@
         "php": ">=7.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.3.0"
 }
