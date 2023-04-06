@@ -2,10 +2,10 @@
 /**
  * Module
  *
- * @package TenUpPlugin
+ * @package TenUpWPScrubber
  */
 
-namespace TenUpPlugin;
+namespace TenUpWPScrubber;
 
 /**
  * Module is any feature that conditionally activates based on the current context.

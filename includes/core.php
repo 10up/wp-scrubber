@@ -2,14 +2,14 @@
 /**
  * Core plugin functionality.
  *
- * @package TenUpPlugin
+ * @package TenUpWPScrubber
  */
 
-namespace TenUpPlugin\Core;
+namespace TenUpWPScrubber\Core;
 
-use TenUpPlugin\ModuleInitialization;
+use TenUpWPScrubber\ModuleInitialization;
 use \WP_Error;
-use TenUpPlugin\Utility;
+use TenUpWPScrubber\Utility;
 
 
 /**
@@ -23,7 +23,7 @@ function setup() {
 	};
 
 	add_action( 'init', $n( 'i18n' ) );
-	add_action( 'init', $n( 'init' ), apply_filters( 'tenup_plugin_init_priority', 8 ) );
+	add_action( 'init', $n( 'init' ), apply_filters( 'wp_scrubber_init_priority', 8 ) );
 	add_action( 'wp_enqueue_scripts', $n( 'scripts' ) );
 	add_action( 'wp_enqueue_scripts', $n( 'styles' ) );
 	add_action( 'admin_enqueue_scripts', $n( 'admin_scripts' ) );
@@ -34,7 +34,7 @@ function setup() {
 	// Hook to allow async or defer on asset loading.
 	add_filter( 'script_loader_tag', $n( 'script_loader_tag' ), 10, 2 );
 
-	do_action( 'tenup_plugin_loaded' );
+	do_action( 'wp_scrubber_loaded' );
 }
 
 /**
@@ -43,9 +43,9 @@ function setup() {
  * @return void
  */
 function i18n() {
-	$locale = apply_filters( 'plugin_locale', get_locale(), 'tenup-plugin' );
-	load_textdomain( 'tenup-plugin', WP_LANG_DIR . '/tenup-plugin/tenup-plugin-' . $locale . '.mo' );
-	load_plugin_textdomain( 'tenup-plugin', false, plugin_basename( TENUP_PLUGIN_PATH ) . '/languages/' );
+	$locale = apply_filters( 'plugin_locale', get_locale(), 'wp-scrubber' );
+	load_textdomain( 'wp-scrubber', WP_LANG_DIR . '/wp-scrubber/wp-scrubber-' . $locale . '.mo' );
+	load_plugin_textdomain( 'wp-scrubber', false, plugin_basename( TENUP_WP_SCRUBBER_PATH ) . '/languages/' );
 }
 
 /**
@@ -54,16 +54,16 @@ function i18n() {
  * @return void
  */
 function init() {
-	do_action( 'tenup_plugin_before_init' );
+	do_action( 'wp_scrubber_before_init' );
 
 	// If the composer.json isn't found, trigger a warning.
-	if ( ! file_exists( TENUP_PLUGIN_PATH . 'composer.json' ) ) {
+	if ( ! file_exists( TENUP_WP_SCRUBBER_PATH . 'composer.json' ) ) {
 		add_action(
 			'admin_notices',
 			function() {
 				$class = 'notice notice-error';
 				/* translators: %s: the path to the plugin */
-				$message = sprintf( __( 'The composer.json file was not found within %s. No classes will be loaded.', 'tenup-plugin' ), TENUP_PLUGIN_PATH );
+				$message = sprintf( __( 'The composer.json file was not found within %s. No classes will be loaded.', 'wp-scrubber' ), TENUP_WP_SCRUBBER_PATH );
 
 				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 			}
@@ -72,7 +72,7 @@ function init() {
 	}
 
 	ModuleInitialization::instance()->init_classes();
-	do_action( 'tenup_plugin_init' );
+	do_action( 'wp_scrubber_init' );
 }
 
 /**
@@ -118,10 +118,10 @@ function get_enqueue_contexts() {
 function script_url( $script, $context ) {
 
 	if ( ! in_array( $context, get_enqueue_contexts(), true ) ) {
-		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in TenUpPlugin script loader.' );
+		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in TenUpWPScrubber script loader.' );
 	}
 
-	return TENUP_PLUGIN_URL . "dist/js/${script}.js";
+	return TENUP_WP_SCRUBBER_URL . "dist/js/${script}.js";
 
 }
 
@@ -136,10 +136,10 @@ function script_url( $script, $context ) {
 function style_url( $stylesheet, $context ) {
 
 	if ( ! in_array( $context, get_enqueue_contexts(), true ) ) {
-		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in TenUpPlugin stylesheet loader.' );
+		return new WP_Error( 'invalid_enqueue_context', 'Invalid $context specified in TenUpWPScrubber stylesheet loader.' );
 	}
 
-	return TENUP_PLUGIN_URL . "dist/css/${stylesheet}.css";
+	return TENUP_WP_SCRUBBER_URL . "dist/css/${stylesheet}.css";
 
 }
 
@@ -151,7 +151,7 @@ function style_url( $stylesheet, $context ) {
 function scripts() {
 
 	wp_enqueue_script(
-		'tenup_plugin_shared',
+		'wp_scrubber_shared',
 		script_url( 'shared', 'shared' ),
 		Utility\get_asset_info( 'shared', 'dependencies' ),
 		Utility\get_asset_info( 'shared', 'version' ),
@@ -159,7 +159,7 @@ function scripts() {
 	);
 
 	wp_enqueue_script(
-		'tenup_plugin_frontend',
+		'wp_scrubber_frontend',
 		script_url( 'frontend', 'frontend' ),
 		Utility\get_asset_info( 'frontend', 'dependencies' ),
 		Utility\get_asset_info( 'frontend', 'version' ),
@@ -176,7 +176,7 @@ function scripts() {
 function admin_scripts() {
 
 	wp_enqueue_script(
-		'tenup_plugin_shared',
+		'wp_scrubber_shared',
 		script_url( 'shared', 'shared' ),
 		Utility\get_asset_info( 'shared', 'dependencies' ),
 		Utility\get_asset_info( 'shared', 'version' ),
@@ -184,7 +184,7 @@ function admin_scripts() {
 	);
 
 	wp_enqueue_script(
-		'tenup_plugin_admin',
+		'wp_scrubber_admin',
 		script_url( 'admin', 'admin' ),
 		Utility\get_asset_info( 'admin', 'dependencies' ),
 		Utility\get_asset_info( 'admin', 'version' ),
@@ -201,7 +201,7 @@ function admin_scripts() {
 function styles() {
 
 	wp_enqueue_style(
-		'tenup_plugin_shared',
+		'wp_scrubber_shared',
 		style_url( 'shared', 'shared' ),
 		[],
 		Utility\get_asset_info( 'shared', 'version' ),
@@ -209,14 +209,14 @@ function styles() {
 
 	if ( is_admin() ) {
 		wp_enqueue_style(
-			'tenup_plugin_admin',
+			'wp_scrubber_admin',
 			style_url( 'admin', 'admin' ),
 			[],
 			Utility\get_asset_info( 'admin', 'version' ),
 		);
 	} else {
 		wp_enqueue_style(
-			'tenup_plugin_frontend',
+			'wp_scrubber_frontend',
 			style_url( 'frontend', 'frontend' ),
 			[],
 			Utility\get_asset_info( 'frontend', 'version' ),
@@ -233,14 +233,14 @@ function styles() {
 function admin_styles() {
 
 	wp_enqueue_style(
-		'tenup_plugin_shared',
+		'wp_scrubber_shared',
 		style_url( 'shared', 'shared' ),
 		[],
 		Utility\get_asset_info( 'shared', 'version' ),
 	);
 
 	wp_enqueue_style(
-		'tenup_plugin_admin',
+		'wp_scrubber_admin',
 		style_url( 'admin', 'admin' ),
 		[],
 		Utility\get_asset_info( 'admin', 'version' ),
@@ -259,7 +259,7 @@ function mce_css( $stylesheets ) {
 		$stylesheets .= ',';
 	}
 
-	return $stylesheets . TENUP_PLUGIN_URL . ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ?
+	return $stylesheets . TENUP_WP_SCRUBBER_URL . ( ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ?
 			'assets/css/frontend/editor-style.css' :
 			'dist/css/editor-style.min.css' );
 }

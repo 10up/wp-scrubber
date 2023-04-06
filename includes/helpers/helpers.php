@@ -2,10 +2,10 @@
 /**
  * Plugin specific helpers.
  *
- * @package TenUpPlugin
+ * @package TenUpWPScrubber
  */
 
-namespace TenUpPlugin;
+namespace TenUpWPScrubber;
 
 /**
  * Get an initialized class by its full class name, including namespace.
@@ -15,5 +15,5 @@ namespace TenUpPlugin;
  * @return false|Module
  */
 function get_module( $class_name ) {
-	return \TenUpPlugin\ModuleInitialization::instance()->get_class( $class_name );
+	return \TenUpWPScrubber\ModuleInitialization::instance()->get_class( $class_name );
 }

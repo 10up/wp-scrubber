@@ -13,7 +13,7 @@
   },
   "autoload": {
     "psr-4": {
-      "TenUpPlugin\\": "includes/classes/"
+      "TenUpWPScrubber\\": "includes/classes/"
     },
     "files": [
       "includes/helpers/helpers.php"
