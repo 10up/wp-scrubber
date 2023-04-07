@@ -31,6 +31,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		global $wpdb;
 
+		// Check the environment. Do not allow
+		if ( 'production' === wp_get_environment_type() && ! $this->allow_on_production() ) {
+			\WP_CLI::error( 'This command cannot be run on a production environment.' );
+		}
+
 		// Drop tables if they exist.
 		\WP_CLI::log( 'Scrubbing users...' );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->usermeta}_temp" );
@@ -203,5 +208,14 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		}
 
 		return $users;
+	}
+
+	/**
+	 * Check if we should allow scrubbing on production.
+	 *
+	 * @return boolean
+	 */
+	function allow_on_production() {
+		return apply_filters( 'wp_scrubber_allow_on_production', false );
 	}
 }
