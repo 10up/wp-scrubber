@@ -35,22 +35,18 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->usermeta}_temp" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->users}_temp" );
 
-		//$this->log( 'Scrubbing users...' );
+		\WP_CLI::log( 'Scrubbing users...' );
 
 		$dummy_users = $this->get_dummy_users();
 
-		var_dump($dummy_users);
-		exit;
-
-		$this->log( 'Duplicating users table..' );
+		\WP_CLI::log( 'Duplicating users table..' );
 
 		$wpdb->query( "CREATE TABLE {$wpdb->users}_temp LIKE $wpdb->users" );
 		$wpdb->query( "INSERT INTO {$wpdb->users}_temp SELECT * FROM $wpdb->users" );
-
-		$this->log( 'Scrub each user record..' );
+		
+		\WP_CLI::log( 'Scrub each user record..' );
 
 		$offset = 0;
-
 		$password = wp_hash_password( 'password' );
 
 		$user_ids = [];
@@ -87,10 +83,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			$offset += 1000;
 		}
 
-		$users_sql_path = $this->snapshot_files->get_file_path( 'data-users.sql', $id );
-		$this->export_temp_table( $users_sql_path, $wpdb->users . '_temp' );
-
-		$this->log( 'Duplicating user meta table...' );
+		\WP_CLI::log( 'Duplicating user meta table...' );
 
 		$wpdb->query( "CREATE TABLE {$wpdb->usermeta}_temp LIKE $wpdb->usermeta" );
 		$wpdb->query( "INSERT INTO {$wpdb->usermeta}_temp SELECT * FROM $wpdb->usermeta" );
@@ -133,28 +126,12 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			);
 		}
 
-		// Export the temp table
-		$usermeta_sql_path = $this->snapshot_files->get_file_path( 'data-usermeta.sql', $id );
-		$this->export_temp_table( $usermeta_sql_path, $wpdb->usermeta . '_temp' );
+		\WP_CLI::log( 'Replacing User tables with the scrubbed versions...' );
 
-		$usermeta_sql = $this->snapshot_files->get_file_contents( 'data-usermeta.sql', $id );
-
-		$this->log( 'Appending scrubbed SQL to dump file...' );
-
-		$users_sql = $this->snapshot_files->get_file_contents( 'data-users.sql', $id );
-
-		file_put_contents( $this->snapshot_files->get_file_path( 'data.sql', $id ), preg_replace( '#`' . $wpdb->users . '_temp`#', $wpdb->users, $users_sql ) . preg_replace( '#`' . $wpdb->usermeta . '_temp`#', $wpdb->usermeta, $usermeta_sql ), FILE_APPEND ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents
-
-		$this->log( 'Removing temporary tables...' );
-
-		$wpdb->query( "DROP TABLE {$wpdb->usermeta}_temp" );
-		$wpdb->query( "DROP TABLE {$wpdb->users}_temp" );
-
-		$this->log( 'Removing old users and usermeta SQL...' );
-
-		$this->snapshot_files->delete_file( 'data-users.sql', $id );
-		$this->snapshot_files->delete_file( 'data-usermeta.sql', $id );
-
+		$wpdb->query( "DROP TABLE {$wpdb->usermeta}" );
+		$wpdb->query( "DROP TABLE {$wpdb->users}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->usermeta}_temp TO {$wpdb->usermeta}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->users}_temp TO {$wpdb->users}" );
 	}
 
 	private function get_dummy_users() {
