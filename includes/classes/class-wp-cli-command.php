@@ -37,10 +37,55 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		}
 
 		$this->scrub_users();
+		$this->scrub_comments();
 
 		do_action( 'wp_scrubber_after_scrub', $args, $assoc_args );
 	}
 
+	/**
+	 * Scrub comments
+	 *
+	 * Remove any comment data from the database.
+	 *
+	 * @param $args
+	 * @param $assoc_args
+	 *
+	 * @return bool
+	 *
+	 */
+	public function scrub_comments() {
+		global $wpdb;
+
+		// Drop tables if they exist.
+		\WP_CLI::log( 'Scrubbing comments...' );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->comments}_temp" );
+		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->commentmeta}_temp" );
+
+		\WP_CLI::log( ' - Duplicating comments table into temp table...' );
+		$wpdb->query( "CREATE TABLE {$wpdb->comments}_temp LIKE $wpdb->comments" );
+		$wpdb->query( "INSERT INTO {$wpdb->comments}_temp SELECT * FROM $wpdb->comments" );
+
+		\WP_CLI::log( ' - Duplicating comment meta table into temp table...' );
+		$wpdb->query( "CREATE TABLE {$wpdb->commentmeta}_temp LIKE $wpdb->commentmeta" );
+		$wpdb->query( "INSERT INTO {$wpdb->commentmeta}_temp SELECT * FROM $wpdb->commentmeta" );
+
+		// TODO: We may want more sophisticated scrubbing of comments later, but right now we'll just truncate the tables.
+		\WP_CLI::log( ' - Scrubbing comments table...' );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->comments}_temp" );
+		$wpdb->query( "TRUNCATE TABLE {$wpdb->commentmeta}_temp" );
+
+		\WP_CLI::log( ' - Replacing comment tables with the scrubbed versions...' );
+		$wpdb->query( "DROP TABLE {$wpdb->comments}" );
+		$wpdb->query( "DROP TABLE {$wpdb->commentmeta}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->comments}_temp TO {$wpdb->comments}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->commentmeta}_temp TO {$wpdb->commentmeta}" );
+	}
+
+	/**
+	 * Scrub WordPress Users
+	 *
+	 * @return void
+	 */
 	private function scrub_users() {
 
 		global $wpdb;
@@ -125,7 +170,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			);
 		}
 
-		\WP_CLI::log( ' - Replacing User tables with the scrubbed versions...' );
+		\WP_CLI::log( ' - Replacing user tables with the scrubbed versions...' );
 
 		$wpdb->query( "DROP TABLE {$wpdb->usermeta}" );
 		$wpdb->query( "DROP TABLE {$wpdb->users}" );
