@@ -31,23 +31,30 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		do_action( 'wp_scrubber_before_scrub', $args, $assoc_args );
 
-		global $wpdb;
-
 		// Check the environment. Do not allow
 		if ( 'production' === wp_get_environment_type() && ! $this->allow_on_production() ) {
 			\WP_CLI::error( 'This command cannot be run on a production environment.' );
 		}
+
+		$this->scrub_users();
+
+		do_action( 'wp_scrubber_after_scrub', $args, $assoc_args );
+	}
+
+	private function scrub_users() {
+
+		global $wpdb;
 
 		// Drop tables if they exist.
 		\WP_CLI::log( 'Scrubbing users...' );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->usermeta}_temp" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->users}_temp" );
 
-		\WP_CLI::log( ' - Duplicating users table...' );
+		\WP_CLI::log( ' - Duplicating users table into temp tables...' );
 		$wpdb->query( "CREATE TABLE {$wpdb->users}_temp LIKE $wpdb->users" );
 		$wpdb->query( "INSERT INTO {$wpdb->users}_temp SELECT * FROM $wpdb->users" );
 		
-		\WP_CLI::log( ' - Scrub each user record...' );
+		\WP_CLI::log( ' - Scrubbing each user record...' );
 		$dummy_users = $this->get_dummy_users();
 
 		$offset = 0;
@@ -75,12 +82,12 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			$offset += 1000;
 		}
 
-		\WP_CLI::log( ' - Duplicating user meta table...' );
+		\WP_CLI::log( ' - Duplicating user meta table into temp table...' );
 
 		$wpdb->query( "CREATE TABLE {$wpdb->usermeta}_temp LIKE $wpdb->usermeta" );
 		$wpdb->query( "INSERT INTO {$wpdb->usermeta}_temp SELECT * FROM $wpdb->usermeta" );
 
-		// Just truncate these fields
+		// Just truncate user description and session tokens.
 		$wpdb->query( "UPDATE {$wpdb->usermeta}_temp SET meta_value='' WHERE meta_key='description' OR meta_key='session_tokens'" );
 
 		$user_ids_count = count( $user_ids );
@@ -124,8 +131,6 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$wpdb->query( "DROP TABLE {$wpdb->users}" );
 		$wpdb->query( "RENAME TABLE {$wpdb->usermeta}_temp TO {$wpdb->usermeta}" );
 		$wpdb->query( "RENAME TABLE {$wpdb->users}_temp TO {$wpdb->users}" );
-
-		do_action( 'wp_scrubber_after_scrub', $args, $assoc_args );
 	}
 
 	/**
