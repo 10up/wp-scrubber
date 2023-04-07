@@ -29,6 +29,8 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		define( 'WP_IMPORTING', true );
 		define( 'WP_ADMIN', true );
 
+		do_action( 'wp_scrubber_before_scrub', $args, $assoc_args );
+
 		global $wpdb;
 
 		// Check the environment. Do not allow
@@ -122,6 +124,8 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$wpdb->query( "DROP TABLE {$wpdb->users}" );
 		$wpdb->query( "RENAME TABLE {$wpdb->usermeta}_temp TO {$wpdb->usermeta}" );
 		$wpdb->query( "RENAME TABLE {$wpdb->users}_temp TO {$wpdb->users}" );
+
+		do_action( 'wp_scrubber_after_scrub', $args, $assoc_args );
 	}
 
 	/**
