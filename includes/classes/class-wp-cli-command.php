@@ -32,19 +32,16 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		global $wpdb;
 
 		// Drop tables if they exist.
+		\WP_CLI::log( 'Scrubbing users...' );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->usermeta}_temp" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->users}_temp" );
 
-		\WP_CLI::log( 'Scrubbing users...' );
-
-		$dummy_users = $this->get_dummy_users();
-
-		\WP_CLI::log( 'Duplicating users table..' );
-
+		\WP_CLI::log( ' - Duplicating users table...' );
 		$wpdb->query( "CREATE TABLE {$wpdb->users}_temp LIKE $wpdb->users" );
 		$wpdb->query( "INSERT INTO {$wpdb->users}_temp SELECT * FROM $wpdb->users" );
 		
-		\WP_CLI::log( 'Scrub each user record..' );
+		\WP_CLI::log( ' - Scrub each user record...' );
+		$dummy_users = $this->get_dummy_users();
 
 		$offset = 0;
 		$password = wp_hash_password( 'password' );
@@ -83,7 +80,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			$offset += 1000;
 		}
 
-		\WP_CLI::log( 'Duplicating user meta table...' );
+		\WP_CLI::log( ' - Duplicating user meta table...' );
 
 		$wpdb->query( "CREATE TABLE {$wpdb->usermeta}_temp LIKE $wpdb->usermeta" );
 		$wpdb->query( "INSERT INTO {$wpdb->usermeta}_temp SELECT * FROM $wpdb->usermeta" );
@@ -126,7 +123,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			);
 		}
 
-		\WP_CLI::log( 'Replacing User tables with the scrubbed versions...' );
+		\WP_CLI::log( ' - Replacing User tables with the scrubbed versions...' );
 
 		$wpdb->query( "DROP TABLE {$wpdb->usermeta}" );
 		$wpdb->query( "DROP TABLE {$wpdb->users}" );
