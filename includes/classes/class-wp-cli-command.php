@@ -44,12 +44,10 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$dummy_users = $this->get_dummy_users();
 
 		$offset = 0;
-		$password = wp_hash_password( 'password' );
-
 		$user_ids = [];
 
 		while ( true ) {
-			$users = $wpdb->get_results( $wpdb->prepare( "SELECT ID, user_login FROM {$wpdb->users}_temp LIMIT 1000 OFFSET %d", $offset ), 'ARRAY_A' );
+			$users = $wpdb->get_results( $wpdb->prepare( "SELECT ID, user_login, user_email FROM {$wpdb->users}_temp LIMIT 1000 OFFSET %d", $offset ), 'ARRAY_A' );
 
 			if ( empty( $users ) ) {
 				break;
@@ -60,21 +58,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			}
 
 			foreach ( $users as $user ) {
-				$user_id = (int) $user['ID'];
-
+				$user_id    = (int) $user['ID'];
 				$user_ids[] = $user_id;
-
 				$dummy_user = $dummy_users[ $user_id % 1000 ];
 
-				$wpdb->query(
-					$wpdb->prepare(
-						"UPDATE {$wpdb->users}_temp SET user_pass=%s, user_email=%s, user_url='', user_activation_key='', display_name=%s WHERE ID=%d",
-						$password,
-						$dummy_user['email'],
-						$user['user_login'],
-						$user['ID']
-					)
-				);
+				$this->scrub_user( $user, $dummy_user );
 			}
 
 			$offset += 1000;
@@ -131,6 +119,65 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$wpdb->query( "RENAME TABLE {$wpdb->users}_temp TO {$wpdb->users}" );
 	}
 
+	/**
+	 * Scrub the user data
+	 *
+	 * @param array $user User array from wpdb query.
+	 * @param array $dummy_user User array from dummy user csv.
+	 * @return void
+	 */
+	private function scrub_user( $user, $dummy_user ) {
+
+		global $wpdb;
+
+		$scrub_user = true;
+
+		if ( ! $this->should_scrub_user( $user ) ) {
+			return false;
+		}
+
+		$password = wp_hash_password( apply_filters( 'wp_scrubber_scrubbed_password', 'password' ) );
+
+		return $wpdb->query(
+			$wpdb->prepare(
+				"UPDATE {$wpdb->users}_temp SET user_pass=%s, user_email=%s, user_url='', user_activation_key='', display_name=%s WHERE ID=%d",
+				$password,
+				$dummy_user['email'],
+				$user['user_login'],
+				$user['ID']
+			)
+		);
+	}
+
+	/**
+	 * Add conditions to check whether a user should be scrubbed or not.
+	 *
+	 * @param array $user User array from wpdb query.
+	 * @return boolean
+	 */
+	private function should_scrub_user( $user ) {
+
+		$scrub = true;
+
+		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', [
+			'get10up.com',
+			'10up.com'
+		] );
+
+		foreach ( $allowed_email_domains as $domain ) {
+			if ( str_contains( $user['user_email'], $domain ) ) {
+				$scrub = false;
+			}
+		}
+
+		return apply_filters( 'wp_scrubber_should_scrub_user', $scrub, $user );
+	}
+
+	/**
+	 * Get dummy users from csv file.
+	 *
+	 * @return array
+	 */
 	private function get_dummy_users() {
 		static $users = [];
 
