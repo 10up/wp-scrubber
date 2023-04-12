@@ -1,10 +1,11 @@
 {
-  "name": "10up/wp-plugin",
+  "name": "10up/wp-scrubber",
   "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "10up",
-      "email": "info@10up.com"
+      "email": "opensource@10up.com"
     }
   ],
   "require": {
