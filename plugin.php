@@ -1,15 +1,23 @@
 <?php
 /**
- * Plugin Name: 10up WP Scrubber
- * Plugin URI:
- * Description: A tool for scrubbing sensitive data from production databases. Available through CLI and includes actions and filters for extensibility.
- * Version:     0.1.0
- * Author:      10up
- * Author URI:  https://10up.com
- * Text Domain: wp-scrubber
- * Domain Path: /languages
- *
+ * 10up WP Scrubber
+ * 
  * @package TenUpWPScrubber
+ * 
+ * @wordpress-plugin
+ * Plugin Name:       10up WP Scrubber
+ * Plugin URI:        https://github.com/10up/wp-scrubber
+ * Description:       A tool for scrubbing sensitive data from production databases. Available through CLI and includes actions and filters for extensibility.
+ * Version:           0.1.0
+ * Requires at least: 
+ * Requires PHP:      7.0
+ * Author:            10up
+ * Author URI:        https://10up.com
+ * License:           GPL v2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Update URI:        https://github.com/10up/wp-scrubber
+ * Text Domain:       wp-scrubber
+ * Domain Path:       /languages
  */
 
 // Useful global constants.
