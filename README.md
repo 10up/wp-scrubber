@@ -7,6 +7,7 @@ This plugin provides a command-line interface for scrubbing sensitive user and c
 ## Installation
 
 1. Clone or download the plugin files into your WordPress plugins directory.
+   1. Note: If on WordPress VIP, the plugin should be added to the `/client-mu-plugins` directory.
 2. Activate the plugin through the WordPress admin interface or via WP-CLI.
 3. Set the `WP_ENVIRONMENT_TYPE` to `local` or `staging`.
 
