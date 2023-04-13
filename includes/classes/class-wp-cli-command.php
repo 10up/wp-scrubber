@@ -75,6 +75,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			\WP_CLI::error( 'This command cannot be run on a production environment.' );
 		}
 
+		// Run through the scrubbing process.
 		$this->scrub_users();
 		$this->scrub_comments();
 
