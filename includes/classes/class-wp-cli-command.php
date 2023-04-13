@@ -24,6 +24,13 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	);
 
 	/**
+	 * Define which specific user emails are allowed exist post-scrub.
+	 *
+	 * @var array
+	 */
+	public $allowed_emails = array();
+
+	/**
 	 * Scrub users
 	 *
 	 * Remove any user data from the database.
@@ -45,6 +52,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			'wp_scrubber_scrub_all_defaults',
 			array(
 				'allowed-domains' => '',
+				'allowed-emails' => '',
 			)
 		);
 
@@ -53,6 +61,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		// Add additional email domains which should not be scrubbed.
 		if ( ! empty( $assoc_args['allowed-domains'] ) ) {
 			$this->allowed_domains = array_merge( $this->allowed_domains, explode( ',', $assoc_args['allowed-domains'] ) );
+		}
+
+		// Add user emails which should not be scrubbed.
+		if ( ! empty( $assoc_args['allowed-emails'] ) ) {
+			$this->allowed_emails = array_merge( $this->allowed_emails, explode( ',', $assoc_args['allowed-emails'] ) );
 		}
 
 		do_action( 'wp_scrubber_before_scrub', $args, $assoc_args );
@@ -244,10 +257,18 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		$scrub = true;
 
+		// Check if the user is part of list of allowed email domains.
 		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', $this->allowed_domains );
-
 		foreach ( $allowed_email_domains as $domain ) {
 			if ( str_contains( $user['user_email'], $domain ) ) {
+				$scrub = false;
+			}
+		}
+
+		// Check if the user has been specifically allowed.
+		$allowed_emails = apply_filters( 'wp_scrubber_allowed_emails', $this->allowed_emails );
+		foreach ( $allowed_emails as $email ) {
+			if ( $user['user_email'] === $email ) {
 				$scrub = false;
 			}
 		}
