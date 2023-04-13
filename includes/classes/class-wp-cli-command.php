@@ -14,6 +14,16 @@ namespace TenUpWPScrubber;
 class WP_CLI_Command extends \WP_CLI_Command {
 
 	/**
+	 * Define which user email domains are allowed exist post-scrub.
+	 *
+	 * @var array
+	 */
+	public $allowed_domains = array(
+		'get10up.com',
+		'10up.com'
+	);
+
+	/**
 	 * Scrub users
 	 *
 	 * Remove any user data from the database.
@@ -28,6 +38,22 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		define( 'WP_IMPORTING', true );
 		define( 'WP_ADMIN', true );
+
+		$password = wp_hash_password( apply_filters( 'wp_scrubber_scrubbed_password', 'password' ) );
+
+		$defaults = apply_filters(
+			'wp_scrubber_scrub_all_defaults',
+			array(
+				'allowed-domains' => '',
+			)
+		);
+
+		$assoc_args = wp_parse_args( $assoc_args, $defaults );
+
+		// Add additional email domains which should not be scrubbed.
+		if ( ! empty( $assoc_args['allowed-domains'] ) ) {
+			$this->allowed_domains = array_merge( $this->allowed_domains, explode( ',', $assoc_args['allowed-domains'] ) );
+		}
 
 		do_action( 'wp_scrubber_before_scrub', $args, $assoc_args );
 
@@ -218,10 +244,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		$scrub = true;
 
-		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', [
-			'get10up.com',
-			'10up.com'
-		] );
+		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', $this->allowed_domains );
 
 		foreach ( $allowed_email_domains as $domain ) {
 			if ( str_contains( $user['user_email'], $domain ) ) {
