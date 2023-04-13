@@ -20,6 +20,14 @@ To use the command, open up your terminal and navigate to your WordPress install
 ```
 wp scrub all
 ```
+
+When creating an export for local development, best practice is to export a scrubbed database from a lower environment:
+ * Copy production into a lower environment (staging, develop, preprod, etc...)
+ * Scrub the data on the lower environment with the `wp scrub all` command.
+ * Export the scrubbed database.
+
+Note: On WordPress VIP, scrubbing commands will occur automatically when copying from production to a lower environment. 
+
 ## Scrubbed Data
 
 ### Users
