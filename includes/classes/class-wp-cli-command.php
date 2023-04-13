@@ -46,8 +46,6 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		define( 'WP_IMPORTING', true );
 		define( 'WP_ADMIN', true );
 
-		$password = wp_hash_password( apply_filters( 'wp_scrubber_scrubbed_password', 'password' ) );
-
 		$defaults = apply_filters(
 			'wp_scrubber_scrub_all_defaults',
 			array(
