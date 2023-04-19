@@ -14,6 +14,23 @@ namespace TenUpWPScrubber;
 class WP_CLI_Command extends \WP_CLI_Command {
 
 	/**
+	 * Define which user email domains are allowed exist post-scrub.
+	 *
+	 * @var array
+	 */
+	public $allowed_domains = array(
+		'get10up.com',
+		'10up.com'
+	);
+
+	/**
+	 * Define which specific user emails are allowed exist post-scrub.
+	 *
+	 * @var array
+	 */
+	public $allowed_emails = array();
+
+	/**
 	 * Scrub users
 	 *
 	 * Remove any user data from the database.
@@ -29,6 +46,26 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		define( 'WP_IMPORTING', true );
 		define( 'WP_ADMIN', true );
 
+		$defaults = apply_filters(
+			'wp_scrubber_scrub_all_defaults',
+			array(
+				'allowed-domains' => '',
+				'allowed-emails' => '',
+			)
+		);
+
+		$assoc_args = wp_parse_args( $assoc_args, $defaults );
+
+		// Add additional email domains which should not be scrubbed.
+		if ( ! empty( $assoc_args['allowed-domains'] ) ) {
+			$this->allowed_domains = array_merge( $this->allowed_domains, explode( ',', $assoc_args['allowed-domains'] ) );
+		}
+
+		// Add user emails which should not be scrubbed.
+		if ( ! empty( $assoc_args['allowed-emails'] ) ) {
+			$this->allowed_emails = array_merge( $this->allowed_emails, explode( ',', $assoc_args['allowed-emails'] ) );
+		}
+
 		do_action( 'wp_scrubber_before_scrub', $args, $assoc_args );
 
 		// Check the environment. Do not allow
@@ -36,6 +73,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			\WP_CLI::error( 'This command cannot be run on a production environment.' );
 		}
 
+		// Run through the scrubbing process.
 		$this->scrub_users();
 		$this->scrub_comments();
 
@@ -218,13 +256,18 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		$scrub = true;
 
-		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', [
-			'get10up.com',
-			'10up.com'
-		] );
-
+		// Check if the user is part of list of allowed email domains.
+		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', $this->allowed_domains );
 		foreach ( $allowed_email_domains as $domain ) {
 			if ( str_contains( $user['user_email'], $domain ) ) {
+				$scrub = false;
+			}
+		}
+
+		// Check if the user has been specifically allowed.
+		$allowed_emails = apply_filters( 'wp_scrubber_allowed_emails', $this->allowed_emails );
+		foreach ( $allowed_emails as $email ) {
+			if ( $user['user_email'] === $email ) {
 				$scrub = false;
 			}
 		}

@@ -1,12 +1,13 @@
-# 10up WP Scrubber
+# WordPress Scrubber
 
-> This plugin provides a command-line interface for scrubbing sensitive user and comment data from a WordPress installation.
+> This WordPress plugin provides a command-line interface for scrubbing sensitive user and comment data from a WordPress installation.
 
 [![Support Level](https://img.shields.io/badge/support-beta-blueviolet.svg)](#support-level) [![GPLv2 License](https://img.shields.io/github/license/10up/wp-scrubber.svg)](https://github.com/10up/wp-scrubber/blob/develop/LICENSE.md)
 
 ## Installation
 
 1. Clone or download the plugin files into your WordPress plugins directory.
+   1. Note: If on WordPress VIP, the plugin should be added to the `/client-mu-plugins` directory.
 2. Activate the plugin through the WordPress admin interface or via WP-CLI.
 3. Set the `WP_ENVIRONMENT_TYPE` to `local` or `staging`.
 
@@ -20,17 +21,53 @@ To use the command, open up your terminal and navigate to your WordPress install
 wp scrub all
 ```
 
+When creating an export for local development, best practice is to export a scrubbed database from a lower environment:
+ * Copy production into a lower environment (staging, develop, preprod, etc...)
+ * Scrub the data on the lower environment with the `wp scrub all` command.
+ * Export the scrubbed database.
+
+Note: On WordPress VIP, scrubbing commands will occur automatically when copying from production to a lower environment. 
+
 ## Scrubbed Data
 
 ### Users
 
  * All passwords are replaced with `password`.
- * Emails are replace with dummy values.
+ * Emails are replaced with dummy values.
  * `display_name` is replaced with `user_login` values.
 
 ### Comments
 
  * Comment and Comment Meta tables are completely emptied.
+
+## CLI Arguments
+
+ * `--allowed-domains` - Comma separated list of email domains. Any WordPress user with this email domain will be ignored by the scrubbing scripts. `10up.com` and `get10up.com` are ignored by default.
+   * ex: `10updocker wp scrub all --allowed-domains=example.com,example.net`
+ * `--allowed-emails` - Comma separated list of email addresses. Any WordPress user with this email will be ignored by the scrubbing scripts.
+   * ex: `10updocker wp scrub all --allowed-emails=user1@example.com,user2@example.com`
+
+## Extensibility
+
+WP Scrubber includes several filters and actions which allows developers to hook into the scrubbing process and add their own rules.
+
+### How can I add my own scrubbing rules?
+
+Additional scrubbing commands can be added before or after the default commands with `wp_scrubber_before_scrub` and `wp_scrubber_after_scrub`.
+
+### How do I allow this on production environments?
+
+WP Scrubber uses `wp_get_environment_type()` to ensure it is not accidentally run on a production environment. By default, unless `WP_ENVIRONMENT_TYPE` is defined, WordPress will assume all environments are production environments.
+
+It is encouraged that `WP_ENVIRONMENT_TYPE` be updated to `local` and `staging`, however if you do indeed need to run on production you can add a filter to `wp_scrubber_allow_on_production`, changing the value to `true`.
+
+### How can I change which users are scrubbed?
+
+In addition to CLI arguments, three filters are available to developers
+
+1. `wp_scrubber_allowed_email_domains` - Allows for ignoring users based on their email domain. By default, `10up.com` and `get10up.com` are ignored.
+2. `wp_scrubber_allowed_emails` - Allows for ignoring specific users based on their full email address. Helpful if you want to save certain users from an organization, but not all of them.
+3. `wp_scrubber_should_scrub_user` - If you conditions are more complex, you can use this filter to check each user individually.
 
 ## Support Level
 
@@ -38,4 +75,6 @@ wp scrub all
 
 ## Like what you see?
 
-<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850" alt="Work with us at 10up"></a>
+<p align="center">
+<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850"></a>
+</p>
