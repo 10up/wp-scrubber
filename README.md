@@ -1,8 +1,8 @@
-# WordPress Scrubber Plugin
+# WordPress Scrubber
 
-> This plugin provides a command-line interface for scrubbing sensitive user and comment data from a WordPress installation.
+> This WordPress plugin provides a command-line interface for scrubbing sensitive user and comment data from a WordPress installation.
 
-[![Support Level](https://img.shields.io/badge/support-beta-blueviolet.svg)](#support-level) 
+[![Support Level](https://img.shields.io/badge/support-beta-blueviolet.svg)](#support-level) [![GPLv2 License](https://img.shields.io/github/license/10up/wp-scrubber.svg)](https://github.com/10up/wp-scrubber/blob/develop/LICENSE.md)
 
 ## Installation
 

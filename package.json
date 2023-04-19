@@ -1,6 +1,8 @@
 {
   "name": "wp-scrubber",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "description": " This plugin provides a command-line interface for scrubbing sensitive user and comment data from a WordPress installation.",
+  "license": "GPL-2.0-or-later",
   "scripts": {
     "start": "npm run watch",
     "watch": "10up-toolkit watch --port=5010 --hot",
