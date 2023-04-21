@@ -1,8 +1,8 @@
-# 10up WP Scrubber
+# WordPress Scrubber
 
-# WordPress Scrubber Plugin
+> This WordPress plugin provides a command-line interface for scrubbing sensitive user and comment data from a WordPress installation.
 
-This plugin provides a command-line interface for scrubbing sensitive user and comment data from a WordPress installation.
+[![Support Level](https://img.shields.io/badge/support-beta-blueviolet.svg)](#support-level) [![GPLv2 License](https://img.shields.io/github/license/10up/wp-scrubber.svg)](https://github.com/10up/wp-scrubber/blob/develop/LICENSE.md)
 
 ## Installation
 
@@ -31,14 +31,17 @@ Note: On WordPress VIP, scrubbing commands will occur automatically when copying
 ## Scrubbed Data
 
 ### Users
+
  * All passwords are replaced with `password`.
  * Emails are replaced with dummy values.
  * `display_name` is replaced with `user_login` values.
 
 ### Comments
+
  * Comment and Comment Meta tables are completely emptied.
 
 ## CLI Arguments
+
  * `--allowed-domains` - Comma separated list of email domains. Any WordPress user with this email domain will be ignored by the scrubbing scripts. `10up.com` and `get10up.com` are ignored by default.
    * ex: `10updocker wp scrub all --allowed-domains=example.com,example.net`
  * `--allowed-emails` - Comma separated list of email addresses. Any WordPress user with this email will be ignored by the scrubbing scripts.
@@ -65,3 +68,13 @@ In addition to CLI arguments, three filters are available to developers
 1. `wp_scrubber_allowed_email_domains` - Allows for ignoring users based on their email domain. By default, `10up.com` and `get10up.com` are ignored.
 2. `wp_scrubber_allowed_emails` - Allows for ignoring specific users based on their full email address. Helpful if you want to save certain users from an organization, but not all of them.
 3. `wp_scrubber_should_scrub_user` - If you conditions are more complex, you can use this filter to check each user individually.
+
+## Support Level
+
+**Beta:** This project is quite new and we're not sure what our ongoing support level for this will be. Bug reports, feature requests, questions, and pull requests are welcome. If you like this project please let us know, but be cautious using this in a Production environment!
+
+## Like what you see?
+
+<p align="center">
+<a href="http://10up.com/contact/"><img src="https://10up.com/uploads/2016/10/10up-Github-Banner.png" width="850"></a>
+</p>
