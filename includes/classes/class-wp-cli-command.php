@@ -74,7 +74,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			\WP_CLI::error( 'This command cannot be run on a production environment.' );
 		}
 
-		$size_limit = apply_filters( 'wp_scrubber_db_size_limit', 1000 );
+		$size_limit = apply_filters( 'wp_scrubber_db_size_limit', 2000 );
 		if ( Helpers\get_database_size() > $size_limit && $assoc_args['ignore-size-limit'] !== 'yes' ) {
 			\WP_CLI::error( "This database is larger than {$size_limit}MB. Ignore this warning with `--ignore-size-limit=yes`" );
 		}
