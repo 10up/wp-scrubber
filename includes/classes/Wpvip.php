@@ -37,7 +37,6 @@ class Wpvip extends \TenUpWPScrubber\Module {
 	 * @return void
 	 */
 	public function scrub_data() {
-		$output = exec('wp scrub all');
-		echo $output;
+		\WP_CLI::runCommand( 'wp scrub all' );
 	}
 }
