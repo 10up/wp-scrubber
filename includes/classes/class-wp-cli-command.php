@@ -77,6 +77,9 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$this->scrub_users();
 		$this->scrub_comments();
 
+		// Flush the cache.
+		wp_cache_flush();
+
 		do_action( 'wp_scrubber_after_scrub', $args, $assoc_args );
 	}
 
