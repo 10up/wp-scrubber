@@ -236,7 +236,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			return false;
 		}
 
-		$password = wp_hash_password( apply_filters( 'wp_scrubber_scrubbed_password', 'password' ) );
+		$password = wp_hash_password( apply_filters( 'wp_scrubber_scrubbed_password', wp_generate_password() ) );
 
 		return $wpdb->query(
 			$wpdb->prepare(
