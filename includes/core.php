@@ -83,7 +83,6 @@ function init() {
 function activate() {
 	// First load the init scripts in case any rewrite functionality is being loaded
 	init();
-	flush_rewrite_rules();
 }
 
 /**
