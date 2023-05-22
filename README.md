@@ -43,9 +43,11 @@ Note: On WordPress VIP, scrubbing commands will occur automatically when copying
 ## CLI Arguments
 
  * `--allowed-domains` - Comma separated list of email domains. Any WordPress user with this email domain will be ignored by the scrubbing scripts. `10up.com` and `get10up.com` are ignored by default.
-   * ex: `10updocker wp scrub all --allowed-domains=example.com,example.net`
+   * ex: `wp scrub all --allowed-domains=example.com,example.net`
  * `--allowed-emails` - Comma separated list of email addresses. Any WordPress user with this email will be ignored by the scrubbing scripts.
-   * ex: `10updocker wp scrub all --allowed-emails=user1@example.com,user2@example.com`
+   * ex: `wp scrub all --allowed-emails=user1@example.com,user2@example.com`
+ * `--ignore-size-limit` - Ignore the database size limit. 
+   * ex: `wp scrub all --ignore-size-limit=yes`
 
 ## Extensibility
 
