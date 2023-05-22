@@ -5,15 +5,27 @@
  * @package TenUpWPScrubber
  */
 
-namespace TenUpWPScrubber;
+namespace TenUpWPScrubber\Helpers;
 
-/**
- * Get an initialized class by its full class name, including namespace.
- *
- * @param string $class_name The class name including the namespace.
- *
- * @return false|Module
- */
-function get_module( $class_name ) {
-	return \TenUpWPScrubber\ModuleInitialization::instance()->get_class( $class_name );
+function get_database_size() {
+	global $wpdb;
+
+	$database_name = $wpdb->dbname;
+
+	$query = "
+		SELECT table_schema AS 'Database',
+		SUM(data_length + index_length) / 1024 / 1024 AS 'Size (MB)'
+		FROM information_schema.TABLES
+		WHERE table_schema = '$database_name'
+		GROUP BY table_schema;
+	";
+
+	$result = $wpdb->get_results($query);
+
+	if (!empty($result)) {
+		// Round to an integer.
+		return intval( $result[0]->{'Size (MB)'} );
+	}
+
+	return 0;
 }

@@ -49,8 +49,9 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$defaults = apply_filters(
 			'wp_scrubber_scrub_all_defaults',
 			array(
-				'allowed-domains' => '',
-				'allowed-emails' => '',
+				'allowed-domains'   => '',
+				'allowed-emails'    => '',
+				'ignore-size-limit' => '',
 			)
 		);
 
@@ -71,6 +72,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		// Check the environment. Do not allow
 		if ( 'production' === wp_get_environment_type() && ! $this->allow_on_production() ) {
 			\WP_CLI::error( 'This command cannot be run on a production environment.' );
+		}
+
+		$size_limit = apply_filters( 'wp_scrubber_db_size_limit', 1000 );
+		if ( Helpers\get_database_size() > $size_limit && $assoc_args['ignore-size-limit'] !== 'yes' ) {
+			\WP_CLI::error( "This database is larger than {$size_limit}MB. Ignore this warning with `--ignore-size-limit=yes`" );
 		}
 
 		// Run through the scrubbing process.
@@ -262,7 +268,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		// Check if the user is part of list of allowed email domains.
 		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', $this->allowed_domains );
 		foreach ( $allowed_email_domains as $domain ) {
-			if ( str_contains( $user['user_email'], $domain ) ) {
+			if ( str_contains( $user['user_email'], '@' . $domain ) ) {
 				$scrub = false;
 			}
 		}
