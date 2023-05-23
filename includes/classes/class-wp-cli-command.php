@@ -234,7 +234,16 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			return false;
 		}
 
-		$password = wp_hash_password( apply_filters( 'wp_scrubber_scrubbed_password', wp_generate_password() ) );
+		/**
+		 * Allow site owners to define their own user password ruleset.
+		 * Otherwise, use the WordPress generated password.
+		 * wp_generate_password() could potentially have performance
+		 * issues on sites with a large user base.
+		 */
+		$password = apply_filters( 'wp_scrubber_scrubbed_password', false );
+		if ( false === $password ) {
+			$password = wp_hash_password( wp_generate_password() );
+		}
 
 		return $wpdb->query(
 			$wpdb->prepare(
