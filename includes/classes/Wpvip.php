@@ -1,9 +1,22 @@
 <?php
+/**
+ * Register the Wpvip class.
+ *
+ * @package TenUpWPScrubber
+ */
 
 namespace TenUpWPScrubber;
 
+/**
+ * Register the Wpvip class.
+ */
 class Wpvip extends \TenUpWPScrubber\Module {
 
+	/**
+	 * Check if the class can be registered.
+	 *
+	 * @return boolean
+	 */
 	public function can_register() {
 
 		$cli_defined = false;

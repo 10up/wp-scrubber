@@ -203,7 +203,7 @@ function styles() {
 		'wp_scrubber_shared',
 		style_url( 'shared', 'shared' ),
 		[],
-		Utility\get_asset_info( 'shared', 'version' ),
+		Utility\get_asset_info( 'shared', 'version' )
 	);
 
 	if ( is_admin() ) {
@@ -211,14 +211,14 @@ function styles() {
 			'wp_scrubber_admin',
 			style_url( 'admin', 'admin' ),
 			[],
-			Utility\get_asset_info( 'admin', 'version' ),
+			Utility\get_asset_info( 'admin', 'version' )
 		);
 	} else {
 		wp_enqueue_style(
 			'wp_scrubber_frontend',
 			style_url( 'frontend', 'frontend' ),
 			[],
-			Utility\get_asset_info( 'frontend', 'version' ),
+			Utility\get_asset_info( 'frontend', 'version' )
 		);
 	}
 
@@ -235,14 +235,14 @@ function admin_styles() {
 		'wp_scrubber_shared',
 		style_url( 'shared', 'shared' ),
 		[],
-		Utility\get_asset_info( 'shared', 'version' ),
+		Utility\get_asset_info( 'shared', 'version' )
 	);
 
 	wp_enqueue_style(
 		'wp_scrubber_admin',
 		style_url( 'admin', 'admin' ),
 		[],
-		Utility\get_asset_info( 'admin', 'version' ),
+		Utility\get_asset_info( 'admin', 'version' )
 	);
 
 }

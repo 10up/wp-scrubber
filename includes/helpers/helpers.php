@@ -7,6 +7,11 @@
 
 namespace TenUpWPScrubber\Helpers;
 
+/**
+ * Get the size of the current database.
+ *
+ * @return int
+ */
 function get_database_size() {
 	global $wpdb;
 
@@ -20,9 +25,9 @@ function get_database_size() {
 		GROUP BY table_schema;
 	";
 
-	$result = $wpdb->get_results($query);
+	$result = $wpdb->get_results( $query );
 
-	if (!empty($result)) {
+	if ( ! empty( $result ) ) {
 		// Round to an integer.
 		return intval( $result[0]->{'Size (MB)'} );
 	}

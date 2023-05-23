@@ -1,6 +1,8 @@
 <?php
 /**
  * Main WP CLI command integration
+ *
+ * @package TenUpWPScrubber
  */
 
 namespace TenUpWPScrubber;
@@ -20,7 +22,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 */
 	public $allowed_domains = array(
 		'get10up.com',
-		'10up.com'
+		'10up.com',
 	);
 
 	/**
@@ -31,15 +33,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	public $allowed_emails = array();
 
 	/**
-	 * Scrub users
+	 * Run all scrubbing functions.
 	 *
-	 * Remove any user data from the database.
-	 *
-	 * @param $args
-	 * @param $assoc_args
-	 *
-	 * @return bool
-	 *
+	 * @param array $args       Positional arguments passed to the command.
+	 * @param array $assoc_args Associative arguments passed to the command.
+	 * @return void
 	 */
 	public function all( $args, $assoc_args ) {
 
@@ -76,7 +74,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		// Limit the plugin on sites with large database sizes.
 		$size_limit = apply_filters( 'wp_scrubber_db_size_limit', 2000 );
-		if ( Helpers\get_database_size() > $size_limit && $assoc_args['ignore-size-limit'] !== 'yes' ) {
+		if ( $size_limit < Helpers\get_database_size() && 'yes' !== $assoc_args['ignore-size-limit'] ) {
 			\WP_CLI::error( "This database is larger than {$size_limit}MB. Ignore this warning with `--ignore-size-limit=yes`" );
 		}
 
@@ -94,12 +92,6 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 * Scrub comments
 	 *
 	 * Remove any comment data from the database.
-	 *
-	 * @param $args
-	 * @param $assoc_args
-	 *
-	 * @return bool
-	 *
 	 */
 	public function scrub_comments() {
 		global $wpdb;
@@ -146,11 +138,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		\WP_CLI::log( ' - Duplicating users table into temp tables...' );
 		$wpdb->query( "CREATE TABLE {$wpdb->users}_temp LIKE $wpdb->users" );
 		$wpdb->query( "INSERT INTO {$wpdb->users}_temp SELECT * FROM $wpdb->users" );
-		
+
 		\WP_CLI::log( ' - Scrubbing each user record...' );
 		$dummy_users = $this->get_dummy_users();
 
-		$offset = 0;
+		$offset   = 0;
 		$user_ids = [];
 
 		while ( true ) {
@@ -231,7 +223,6 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *
 	 * @param array $user User array from wpdb query.
 	 * @param array $dummy_user User array from dummy user csv.
-	 * @return void
 	 */
 	private function scrub_user( $user, $dummy_user ) {
 
@@ -322,7 +313,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *
 	 * @return boolean
 	 */
-	function allow_on_production() {
+	public function allow_on_production() {
 		return apply_filters( 'wp_scrubber_allow_on_production', false );
 	}
 }
