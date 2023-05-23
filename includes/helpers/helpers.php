@@ -25,7 +25,16 @@ function get_database_size() {
 		GROUP BY table_schema;
 	";
 
-	$result = $wpdb->get_results( $query );
+	$result = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT table_schema AS 'Database',
+			SUM(data_length + index_length) / 1024 / 1024 AS 'Size (MB)'
+			FROM information_schema.TABLES
+			WHERE table_schema = '%s'
+			GROUP BY table_schema;",
+			$database_name
+		)
+	);
 
 	if ( ! empty( $result ) ) {
 		// Round to an integer.
