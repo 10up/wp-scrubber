@@ -49,6 +49,13 @@ Note: On WordPress VIP, scrubbing commands will occur automatically when copying
  * `--ignore-size-limit` - Ignore the database size limit. 
    * ex: `wp scrub all --ignore-size-limit=yes`
 
+## Database Size Limit
+WP Scrubber includes a database size limit of 2GB. This limit exists as a failsafe to prevent the scrubbing action from taking effect on large sites, unless the developer chosen to ignore the warning.
+
+The core plugin is very quick and scales based on the number of users which need to be scrubbed. However, because there are additional hooks and filter which projects are encouraged to extend, cvustom queries which loop through post or postmeta can slow down the scrub operation considerably.
+
+You can adjust the default size limit with `wp_scrubber_db_size_limit`.
+
 ## Extensibility
 
 WP Scrubber includes several filters and actions which allows developers to hook into the scrubbing process and add their own rules.
