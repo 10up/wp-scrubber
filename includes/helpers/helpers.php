@@ -30,7 +30,7 @@ function get_database_size() {
 			"SELECT table_schema AS 'Database',
 			SUM(data_length + index_length) / 1024 / 1024 AS 'Size (MB)'
 			FROM information_schema.TABLES
-			WHERE table_schema = '%s'
+			WHERE table_schema = %s
 			GROUP BY table_schema;",
 			$database_name
 		)
