@@ -15,10 +15,11 @@
 
 The plugin provides a WP-CLI command called `wp scrub all` that will scrub all user and comment data from the WordPress database. This command can only be run on non-production environments, unless overridden with `wp_scrubber_allow_on_production`.
 
-To use the command, open up your terminal and navigate to your WordPress installation. Then run the following command:
+To use the command, open up your terminal and navigate to your WordPress installation. Then run the following commands:
 
 ```
 wp scrub all
+wp cache flush
 ```
 
 When creating an export for local development, best practice is to export a scrubbed database from a lower environment:
@@ -32,13 +33,25 @@ Note: On WordPress VIP, scrubbing commands will occur automatically when copying
 
 ### Users
 
- * All passwords are replaced with `password`.
- * Emails are replaced with dummy values.
- * `display_name` is replaced with `user_login` values.
+ * All exisiting passwords are replaced with a random password.
+ * Email, user_login and display_name are replaced with dummy values.
 
 ### Comments
 
  * Comment and Comment Meta tables are completely emptied.
+ To only scrub comments run the following command:
+
+```
+wp scrub scrub_comments
+```
+
+On a multisite, to scrub comments across all the sites you can run the following commands:
+
+```
+wp site list --field=url | xargs -n1 -I % wp --url=% scrub scrub_comments
+wp site list --field=url | xargs -n1 -I % wp --url=% cache flush
+wp cache flush --network
+```
 
 ## CLI Arguments
 
