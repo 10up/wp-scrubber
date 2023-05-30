@@ -43,9 +43,18 @@ Note: On WordPress VIP, scrubbing commands will occur automatically when copying
 ## CLI Arguments
 
  * `--allowed-domains` - Comma separated list of email domains. Any WordPress user with this email domain will be ignored by the scrubbing scripts. `10up.com` and `get10up.com` are ignored by default.
-   * ex: `10updocker wp scrub all --allowed-domains=example.com,example.net`
+   * ex: `wp scrub all --allowed-domains=example.com,example.net`
  * `--allowed-emails` - Comma separated list of email addresses. Any WordPress user with this email will be ignored by the scrubbing scripts.
-   * ex: `10updocker wp scrub all --allowed-emails=user1@example.com,user2@example.com`
+   * ex: `wp scrub all --allowed-emails=user1@example.com,user2@example.com`
+ * `--ignore-size-limit` - Ignore the database size limit. 
+   * ex: `wp scrub all --ignore-size-limit=yes`
+
+## Database Size Limit
+WP Scrubber includes a database size limit of 2GB. This limit exists as a failsafe to prevent the scrubbing action from taking effect on large sites, unless the developer chosen to ignore the warning.
+
+The core plugin is very quick and scales based on the number of users which need to be scrubbed. However, because there are additional hooks and filter which projects are encouraged to extend, cvustom queries which loop through post or postmeta can slow down the scrub operation considerably.
+
+You can adjust the default size limit with `wp_scrubber_db_size_limit`.
 
 ## Extensibility
 
