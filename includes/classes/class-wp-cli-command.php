@@ -97,7 +97,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		global $wpdb;
 
 		// Drop tables if they exist.
-		\WP_CLI::log( 'Scrubbing comments...' );
+		\WP_CLI::log( "Scrubbing comments on {$wpdb->comments}..." );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->comments}_temp" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->commentmeta}_temp" );
 
@@ -247,10 +247,12 @@ class WP_CLI_Command extends \WP_CLI_Command {
 
 		return $wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->users}_temp SET user_pass=%s, user_email=%s, user_url='', user_activation_key='', display_name=%s WHERE ID=%d",
+				"UPDATE {$wpdb->users}_temp SET user_pass=%s, user_email=%s, user_url='', user_activation_key='', user_login=%s, user_nicename=%s, display_name=%s WHERE ID=%d",
 				$password,
 				$dummy_user['email'],
-				$user['user_login'],
+				$dummy_user['username'],
+				$dummy_user['username'],
+				$dummy_user['first_name'] . ' ' . $dummy_user['last_name'],
 				$user['ID']
 			)
 		);
