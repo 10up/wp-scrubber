@@ -1,6 +1,8 @@
 <?php
 /**
  * Main WP CLI command integration
+ *
+ * @package TenUpWPScrubber
  */
 
 namespace TenUpWPScrubber;
@@ -20,7 +22,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 */
 	public $allowed_domains = array(
 		'get10up.com',
-		'10up.com'
+		'10up.com',
 	);
 
 	/**
@@ -31,15 +33,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	public $allowed_emails = array();
 
 	/**
-	 * Scrub users
+	 * Run all scrubbing functions.
 	 *
-	 * Remove any user data from the database.
-	 *
-	 * @param $args
-	 * @param $assoc_args
-	 *
-	 * @return bool
-	 *
+	 * @param array $args       Positional arguments passed to the command.
+	 * @param array $assoc_args Associative arguments passed to the command.
+	 * @return void
 	 */
 	public function all( $args, $assoc_args ) {
 
@@ -49,8 +47,9 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		$defaults = apply_filters(
 			'wp_scrubber_scrub_all_defaults',
 			array(
-				'allowed-domains' => '',
-				'allowed-emails' => '',
+				'allowed-domains'   => '',
+				'allowed-emails'    => '',
+				'ignore-size-limit' => '',
 			)
 		);
 
@@ -73,9 +72,18 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			\WP_CLI::error( 'This command cannot be run on a production environment.' );
 		}
 
+		// Limit the plugin on sites with large database sizes.
+		$size_limit = apply_filters( 'wp_scrubber_db_size_limit', 2000 );
+		if ( $size_limit < Helpers\get_database_size() && 'yes' !== $assoc_args['ignore-size-limit'] ) {
+			\WP_CLI::error( "This database is larger than {$size_limit}MB. Ignore this warning with `--ignore-size-limit=yes`" );
+		}
+
 		// Run through the scrubbing process.
 		$this->scrub_users();
 		$this->scrub_comments();
+
+		// Flush the cache.
+		wp_cache_flush();
 
 		do_action( 'wp_scrubber_after_scrub', $args, $assoc_args );
 	}
@@ -84,18 +92,12 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 * Scrub comments
 	 *
 	 * Remove any comment data from the database.
-	 *
-	 * @param $args
-	 * @param $assoc_args
-	 *
-	 * @return bool
-	 *
 	 */
 	public function scrub_comments() {
 		global $wpdb;
 
 		// Drop tables if they exist.
-		\WP_CLI::log( 'Scrubbing comments...' );
+		\WP_CLI::log( "Scrubbing comments on {$wpdb->comments}..." );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->comments}_temp" );
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->commentmeta}_temp" );
 
@@ -136,11 +138,11 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		\WP_CLI::log( ' - Duplicating users table into temp tables...' );
 		$wpdb->query( "CREATE TABLE {$wpdb->users}_temp LIKE $wpdb->users" );
 		$wpdb->query( "INSERT INTO {$wpdb->users}_temp SELECT * FROM $wpdb->users" );
-		
+
 		\WP_CLI::log( ' - Scrubbing each user record...' );
 		$dummy_users = $this->get_dummy_users();
 
-		$offset = 0;
+		$offset   = 0;
 		$user_ids = [];
 
 		while ( true ) {
@@ -221,7 +223,6 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *
 	 * @param array $user User array from wpdb query.
 	 * @param array $dummy_user User array from dummy user csv.
-	 * @return void
 	 */
 	private function scrub_user( $user, $dummy_user ) {
 
@@ -233,14 +234,25 @@ class WP_CLI_Command extends \WP_CLI_Command {
 			return false;
 		}
 
-		$password = wp_hash_password( apply_filters( 'wp_scrubber_scrubbed_password', 'password' ) );
+		/**
+		 * Allow site owners to define their own user password ruleset.
+		 * Otherwise, use the WordPress generated password.
+		 * wp_generate_password() could potentially have performance
+		 * issues on sites with a large user base.
+		 */
+		$password = apply_filters( 'wp_scrubber_scrubbed_password', false );
+		if ( false === $password ) {
+			$password = wp_hash_password( wp_generate_password() );
+		}
 
 		return $wpdb->query(
 			$wpdb->prepare(
-				"UPDATE {$wpdb->users}_temp SET user_pass=%s, user_email=%s, user_url='', user_activation_key='', display_name=%s WHERE ID=%d",
+				"UPDATE {$wpdb->users}_temp SET user_pass=%s, user_email=%s, user_url='', user_activation_key='', user_login=%s, user_nicename=%s, display_name=%s WHERE ID=%d",
 				$password,
 				$dummy_user['email'],
-				$user['user_login'],
+				$dummy_user['username'],
+				$dummy_user['username'],
+				$dummy_user['first_name'] . ' ' . $dummy_user['last_name'],
 				$user['ID']
 			)
 		);
@@ -259,7 +271,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 		// Check if the user is part of list of allowed email domains.
 		$allowed_email_domains = apply_filters( 'wp_scrubber_allowed_email_domains', $this->allowed_domains );
 		foreach ( $allowed_email_domains as $domain ) {
-			if ( str_contains( $user['user_email'], $domain ) ) {
+			if ( str_contains( $user['user_email'], '@' . $domain ) ) {
 				$scrub = false;
 			}
 		}
@@ -312,7 +324,7 @@ class WP_CLI_Command extends \WP_CLI_Command {
 	 *
 	 * @return boolean
 	 */
-	function allow_on_production() {
+	public function allow_on_production() {
 		return apply_filters( 'wp_scrubber_allow_on_production', false );
 	}
 }

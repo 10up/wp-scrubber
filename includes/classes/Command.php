@@ -1,9 +1,22 @@
 <?php
+/**
+ * Register the Command class.
+ *
+ * @package TenUpWPScrubber
+ */
 
 namespace TenUpWPScrubber;
 
+/**
+ * Register the Command class.
+ */
 class Command extends \TenUpWPScrubber\Module {
 
+	/**
+	 * Check if the class can be registered.
+	 *
+	 * @return boolean
+	 */
 	public function can_register() {
 		return defined( 'WP_CLI' ) && WP_CLI;
 	}

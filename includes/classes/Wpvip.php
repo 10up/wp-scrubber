@@ -1,9 +1,22 @@
 <?php
+/**
+ * Register the Wpvip class.
+ *
+ * @package TenUpWPScrubber
+ */
 
 namespace TenUpWPScrubber;
 
+/**
+ * Register the Wpvip class.
+ */
 class Wpvip extends \TenUpWPScrubber\Module {
 
+	/**
+	 * Check if the class can be registered.
+	 *
+	 * @return boolean
+	 */
 	public function can_register() {
 
 		$cli_defined = false;
@@ -37,7 +50,6 @@ class Wpvip extends \TenUpWPScrubber\Module {
 	 * @return void
 	 */
 	public function scrub_data() {
-		$output = exec('wp scrub all');
-		echo $output;
+		\WP_CLI::runCommand( 'wp scrub all' );
 	}
 }
