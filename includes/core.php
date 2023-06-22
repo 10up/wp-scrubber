@@ -24,6 +24,8 @@ function setup() {
 			add_action( 'vip_datasync_cleanup', $n( 'vip_scrub_data' ) );
 		}
 	}
+
+	do_action( 'wp_scrubber_loaded' );
 }
 
 /**
