@@ -1,22 +1,31 @@
 {
-  "name": "10up/wp-plugin",
+  "name": "10up/wp-scrubber",
   "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "10up",
-      "email": "info@10up.com"
+      "email": "opensource@10up.com"
     }
   ],
   "require": {
-    "php": ">=7.0",
-    "haydenpierce/class-finder": "^0.4.3"
+    "php": ">=7.3"
+  },
+  "require-dev": {
+    "10up/phpcs-composer": "dev-master"
+  },
+  "scripts": {
+    "lint": "phpcs .",
+    "lint-fix": "phpcbf ."
   },
   "autoload": {
     "psr-4": {
       "TenUpWPScrubber\\": "includes/classes/"
-    },
-    "files": [
-      "includes/helpers/helpers.php"
-    ]
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }

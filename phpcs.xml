@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<ruleset name="10up PHPCS">
+	<description>10up PHPCS extended.</description>
+	<exclude-pattern>dist/</exclude-pattern>
+	<rule ref="10up-Default">
+		<exclude name="WordPress.DB.RestrictedFunctions" />
+		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
+		<exclude name="WordPress.DB.DirectDatabaseQuery.DirectQuery" />
+		<exclude name="WordPress.DB.DirectDatabaseQuery.SchemaChange" />
+	</rule>
+
+	<arg name="colors"/>
+</ruleset>
