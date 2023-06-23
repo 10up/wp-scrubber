@@ -6,7 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'VariableAnalysis\\' => array($vendorDir . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis'),
     'TenUpWPScrubber\\' => array($baseDir . '/includes/classes'),
-    'HaydenPierce\\ClassFinder\\UnitTest\\' => array($vendorDir . '/haydenpierce/class-finder/test/unit'),
-    'HaydenPierce\\ClassFinder\\' => array($vendorDir . '/haydenpierce/class-finder/src'),
+    'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => array($vendorDir . '/dealerdirect/phpcodesniffer-composer-installer/src'),
 );

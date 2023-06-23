@@ -9,8 +9,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0",
-    "haydenpierce/class-finder": "^0.4.3"
+    "php": ">=7.3"
   },
   "require-dev": {
     "10up/phpcs-composer": "dev-master"
@@ -22,10 +21,7 @@
   "autoload": {
     "psr-4": {
       "TenUpWPScrubber\\": "includes/classes/"
-    },
-    "files": [
-      "includes/helpers/helpers.php"
-    ]
+    }
   },
   "config": {
     "allow-plugins": {

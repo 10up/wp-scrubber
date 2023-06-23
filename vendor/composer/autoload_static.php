@@ -6,34 +6,33 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit6f02653901cdcc169c7ba39c70be615f
 {
-    public static $files = array (
-        '86a57a6df3332fab9fa7cc687e1d2d04' => __DIR__ . '/../..' . '/includes/helpers/helpers.php',
-    );
-
     public static $prefixLengthsPsr4 = array (
+        'V' => 
+        array (
+            'VariableAnalysis\\' => 17,
+        ),
         'T' => 
         array (
             'TenUpWPScrubber\\' => 16,
         ),
-        'H' => 
+        'D' => 
         array (
-            'HaydenPierce\\ClassFinder\\UnitTest\\' => 34,
-            'HaydenPierce\\ClassFinder\\' => 25,
+            'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 55,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'VariableAnalysis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis',
+        ),
         'TenUpWPScrubber\\' => 
         array (
             0 => __DIR__ . '/../..' . '/includes/classes',
         ),
-        'HaydenPierce\\ClassFinder\\UnitTest\\' => 
+        'Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\' => 
         array (
-            0 => __DIR__ . '/..' . '/haydenpierce/class-finder/test/unit',
-        ),
-        'HaydenPierce\\ClassFinder\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/haydenpierce/class-finder/src',
+            0 => __DIR__ . '/..' . '/dealerdirect/phpcodesniffer-composer-installer/src',
         ),
     );
 
