@@ -13,7 +13,7 @@
 
 ## Usage
 
-The plugin provides a WP-CLI command called `wp scrub all` that will scrub all user and comment data from the WordPress database. This command can only be run on non-production environments, unless overridden with `wp_scrubber_allow_on_production`.
+The plugin provides a WP-CLI command called `wp scrub all` that will scrub all user and comment data from the WordPress database. This command can only be run on non-production environments, unless overridden with `wp_scrubber_allow_on_production`. You can also run `wp scrub users` or `wp scrub comments` to only scrub users or comments.
 
 To use the command, open up your terminal and navigate to your WordPress installation. Then run the following commands:
 
@@ -27,7 +27,7 @@ When creating an export for local development, best practice is to export a scru
  * Scrub the data on the lower environment with the `wp scrub all` command.
  * Export the scrubbed database.
 
-Note: On WordPress VIP, scrubbing commands will occur automatically when copying from production to a lower environment. 
+Note: On WordPress VIP, scrubbing commands will occur automatically when copying from production to a lower environment.
 
 ## Scrubbed Data
 
@@ -36,13 +36,19 @@ Note: On WordPress VIP, scrubbing commands will occur automatically when copying
  * All exisiting passwords are replaced with a random password.
  * Email, user_login and display_name are replaced with dummy values.
 
+To only scrub users run the following command:
+
+```
+wp scrub users
+```
+
 ### Comments
 
  * Comment and Comment Meta tables are completely emptied.
  To only scrub comments run the following command:
 
 ```
-wp scrub scrub_comments
+wp scrub comments
 ```
 
 On a multisite, to scrub comments across all the sites you can run the following commands:
@@ -59,8 +65,8 @@ wp cache flush --network
    * ex: `wp scrub all --allowed-domains=example.com,example.net`
  * `--allowed-emails` - Comma separated list of email addresses. Any WordPress user with this email will be ignored by the scrubbing scripts.
    * ex: `wp scrub all --allowed-emails=user1@example.com,user2@example.com`
- * `--ignore-size-limit` - Ignore the database size limit. 
-   * ex: `wp scrub all --ignore-size-limit=yes`
+ * `--ignore-size-limit` - Ignore the database size limit.
+   * ex: `wp scrub all --ignore-size-limit
 
 ## Database Size Limit
 WP Scrubber includes a database size limit of 2GB. This limit exists as a failsafe to prevent the scrubbing action from taking effect on large sites, unless the developer chosen to ignore the warning.
