@@ -8,7 +8,7 @@
  * Plugin Name:       WP Scrubber
  * Plugin URI:        https://github.com/10up/wp-scrubber
  * Description:       A tool for scrubbing sensitive data from production databases. Available through CLI. Includes actions and filters for extensibility.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires PHP:      8.0+
  * Author:            10up
  * Author URI:        https://10up.com
@@ -20,7 +20,7 @@
  */
 
 // Useful global constants.
-define( 'TENUP_WP_SCRUBBER_VERSION', '1.0.0' );
+define( 'TENUP_WP_SCRUBBER_VERSION', '1.0.1' );
 define( 'TENUP_WP_SCRUBBER_URL', plugin_dir_url( __FILE__ ) );
 define( 'TENUP_WP_SCRUBBER_PATH', plugin_dir_path( __FILE__ ) );
 define( 'TENUP_WP_SCRUBBER_INC', TENUP_WP_SCRUBBER_PATH . 'includes/' );
