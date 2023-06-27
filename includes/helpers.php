@@ -78,8 +78,9 @@ function log( $message, $logger = null ) {
  * Remove any comment data from the database.
  *
  * @param callable $logger Logging function
+ * @param boolean  $replace_tables  Replace tables with temp ones
  */
-function scrub_comments( $logger = null ) {
+function scrub_comments( $logger = null, $replace_tables = true ) {
 	global $wpdb;
 
 	// Drop tables if they exist.
@@ -100,11 +101,13 @@ function scrub_comments( $logger = null ) {
 	$wpdb->query( "TRUNCATE TABLE {$wpdb->comments}_temp" );
 	$wpdb->query( "TRUNCATE TABLE {$wpdb->commentmeta}_temp" );
 
-	log( ' - Replacing comment tables with the scrubbed versions...', $logger );
-	$wpdb->query( "DROP TABLE {$wpdb->comments}" );
-	$wpdb->query( "DROP TABLE {$wpdb->commentmeta}" );
-	$wpdb->query( "RENAME TABLE {$wpdb->comments}_temp TO {$wpdb->comments}" );
-	$wpdb->query( "RENAME TABLE {$wpdb->commentmeta}_temp TO {$wpdb->commentmeta}" );
+	if ( $replace_tables ) {
+		log( ' - Replacing comment tables with the scrubbed versions...', $logger );
+		$wpdb->query( "DROP TABLE {$wpdb->comments}" );
+		$wpdb->query( "DROP TABLE {$wpdb->commentmeta}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->comments}_temp TO {$wpdb->comments}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->commentmeta}_temp TO {$wpdb->commentmeta}" );
+	}
 }
 
 /**
@@ -113,9 +116,10 @@ function scrub_comments( $logger = null ) {
  * @param array    $allowed_domains Allowed email domains
  * @param array    $allowed_emails  Allowed email addresses
  * @param callable $logger Logging function
+ * @param boolean  $replace_tables  Replace user tables with temp ones
  * @return void
  */
-function scrub_users( $allowed_domains = [], $allowed_emails = [], $logger = null ) {
+function scrub_users( $allowed_domains = [], $allowed_emails = [], $logger = null, $replace_tables = true ) {
 	global $wpdb;
 
 	// Drop tables if they exist.
@@ -135,7 +139,7 @@ function scrub_users( $allowed_domains = [], $allowed_emails = [], $logger = nul
 
 	while ( true ) {
 		$users = $wpdb->get_results( $wpdb->prepare( "SELECT ID, user_login, user_email FROM {$wpdb->users}_temp LIMIT 1000 OFFSET %d", $offset ), 'ARRAY_A' );
-
+		var_dump($users);
 		if ( empty( $users ) ) {
 			break;
 		}
@@ -198,12 +202,14 @@ function scrub_users( $allowed_domains = [], $allowed_emails = [], $logger = nul
 		);
 	}
 
-	log( ' - Replacing user tables with the scrubbed versions...', $logger );
+	if ( $replace_tables ) {
+		log( ' - Replacing user tables with the scrubbed versions...', $logger );
 
-	$wpdb->query( "DROP TABLE {$wpdb->usermeta}" );
-	$wpdb->query( "DROP TABLE {$wpdb->users}" );
-	$wpdb->query( "RENAME TABLE {$wpdb->usermeta}_temp TO {$wpdb->usermeta}" );
-	$wpdb->query( "RENAME TABLE {$wpdb->users}_temp TO {$wpdb->users}" );
+		$wpdb->query( "DROP TABLE {$wpdb->usermeta}" );
+		$wpdb->query( "DROP TABLE {$wpdb->users}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->usermeta}_temp TO {$wpdb->usermeta}" );
+		$wpdb->query( "RENAME TABLE {$wpdb->users}_temp TO {$wpdb->users}" );
+	}
 }
 
 /**

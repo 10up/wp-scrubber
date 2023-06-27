@@ -21,7 +21,11 @@
   "autoload": {
     "psr-4": {
       "TenUpWPScrubber\\": "includes/classes/"
-    }
+    },
+    "files": [
+      "includes/helpers.php",
+      "includes/core.php"
+    ]
   },
   "config": {
     "allow-plugins": {
