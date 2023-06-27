@@ -139,7 +139,7 @@ function scrub_users( $allowed_domains = [], $allowed_emails = [], $logger = nul
 
 	while ( true ) {
 		$users = $wpdb->get_results( $wpdb->prepare( "SELECT ID, user_login, user_email FROM {$wpdb->users}_temp LIMIT 1000 OFFSET %d", $offset ), 'ARRAY_A' );
-		var_dump($users);
+
 		if ( empty( $users ) ) {
 			break;
 		}
