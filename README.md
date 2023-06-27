@@ -97,6 +97,14 @@ In addition to CLI arguments, three filters are available to developers
 2. `wp_scrubber_allowed_emails` - Allows for ignoring specific users based on their full email address. Helpful if you want to save certain users from an organization, but not all of them.
 3. `wp_scrubber_should_scrub_user` - If you conditions are more complex, you can use this filter to check each user individually.
 
+## PII
+
+WP Scrubber scrubs PII based on where WordPress core stores data (users, comments, standard user/comment meta keys). It does not have knowledge of PII stored by third party plugins. Even when using this tool you should audit your database for third party PII.
+
+## Definition of Beta
+
+10up considers this tool production ready for 10up projects. Publicly we define it as beta because we are wary of people relying on this tool solely when third party software can store PII in unknown locations.
+
 ## Support Level
 
 **Beta:** This project is quite new and we're not sure what our ongoing support level for this will be. Bug reports, feature requests, questions, and pull requests are welcome. If you like this project please let us know, but be cautious using this in a Production environment!
