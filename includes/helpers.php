@@ -295,7 +295,8 @@ function get_dummy_users() {
 	static $users = [];
 
 	if ( empty( $users ) ) {
-		$file = fopen( trailingslashit( TENUP_WP_SCRUBBER_INC ) . 'data/users.csv', 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
+		// We use __DIR__ here because this file is loaded via Composer outside the context of plugin constants
+		$file = fopen( __DIR__ . '/data/users.csv', 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_fopen
 
 		$line = fgetcsv( $file );
 		while ( false !== $line ) {
