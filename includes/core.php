@@ -32,5 +32,5 @@ function setup() {
  * Scrub data on WP VIP data sync
  */
 function vip_scrub_data() {
-	\WP_CLI::runCommand( apply_filters( 'wp_scrubber_vip_cleanup_command', 'wp scrub all' ) );
+	\WP_CLI::runCommand( apply_filters( 'wp_scrubber_vip_cleanup_command', 'scrub all' ) );
 }
