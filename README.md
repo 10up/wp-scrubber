@@ -54,7 +54,7 @@ wp scrub comments
 On a multisite, to scrub comments across all the sites you can run the following commands:
 
 ```
-wp site list --field=url | xargs -n1 -I % wp --url=% scrub scrub_comments
+wp site list --field=url | xargs -n1 -I % wp --url=% scrub comments
 wp site list --field=url | xargs -n1 -I % wp --url=% cache flush
 wp cache flush --network
 ```
