@@ -103,7 +103,7 @@ WP Scrubber scrubs PII based on where WordPress core stores data (users, comment
 
 ## JSON Configuration
 WP Scrubber also includes the option to configure scrubbing rules using a JSON configuration file. This allows for more detailed and flexible scrubbing rules for post types, taxonomies, options, user data, custom tables, and truncating tables.
-To use the JSON configuration, create a `wp-scrubber.json` file in the root of your WordPress installation. The plugin will automatically detect and use this file for scrubbing rules.
+To use the JSON configuration, create a `wp-scrubber.json` file in the `wp-content` directory of your WordPress installation. The plugin will automatically detect and use this file for scrubbing rules.
 
 ### JSON Configuration Structure
 
@@ -120,7 +120,7 @@ Define which post types and their associated fields and meta fields to scrub.
         // More fields...
       ],
       "meta_fields": [
-        { "key": "meta_key_name", "action": "replace", "value": "new value" }
+        { "name": "meta_key_name", "action": "replace", "value": "new value" }
         // More meta_fields...
       ]
     },
@@ -136,7 +136,7 @@ Define which post types and their associated fields and meta fields to scrub.
 	- `faker_type`: Type of fake data from Faker (e.g., `sentence`).
 	- `value`: Replacement value for `replace` action.
 - `meta_fields`: Post meta fields to scrub.
-	- `key`: Meta key.
+	- `name`: Meta key.
 	- `action`, `faker_type`, `value`: As described above.
 
 #### Taxonomies
@@ -152,7 +152,7 @@ Define taxonomies and their terms and meta fields to scrub.
         // More fields...
       ],
       "meta_fields": [
-        { "key": "meta_key_name", "action": "replace", "value": "new value" }
+        { "name": "meta_key_name", "action": "replace", "value": "new value" }
         // More meta_fields...
       ]
     },
@@ -165,7 +165,7 @@ Define taxonomies and their terms and meta fields to scrub.
 - `fields`: Fields to scrub within the terms.
 	- `name`, `action`, `faker_type`, `value`: As described above.
 - `meta_fields`: Term meta fields to scrub.
-	- `key`, `action`, `faker_type`, `value`: As described above.
+	- `name`, `action`, `faker_type`, `value`: As described above.
 
 #### Options
 Define WordPress options to scrub.
@@ -193,7 +193,7 @@ Define user data fields to scrub.
       // More user_data...
     ],
     "meta_fields": [
-      { "key": "meta_key_name", "action": "replace", "value": "new value" }
+      { "name": "meta_key_name", "action": "replace", "value": "new value" }
       // More meta_fields...
     ]
   ]
@@ -203,7 +203,7 @@ Define user data fields to scrub.
 - `fields`: Fields to scrub within the user.
 	- `name`, `action`, `faker_type`, `value`: As described above.
 - `meta_fields`: User meta fields to scrub.
-	- `key`, `action`, `faker_type`, `value`: As described above.
+	- `name`, `action`, `faker_type`, `value`: As described above.
 
 #### Custom Tables
 Define custom tables and columns to scrub.
